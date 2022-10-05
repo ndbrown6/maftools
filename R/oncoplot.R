@@ -784,7 +784,7 @@ oncoplot = oncoplot = function(maf, top = 20, minMut = NULL, genes = NULL, alter
             af_i_mat = matrix(c(which(rownames(nm) == af_i_sample),
                                 which(colnames(nm) == ig)),
                               nrow = 1)
-            points(af_i_mat, pch = additionalFeaturePch, col= additionalFeatureCol, cex = additionalFeatureCex)
+            points(c(af_i_mat[1]-.5, af_i_mat[1]+.5), c(af_i_mat[2]-.5, af_i_mat[2]+.5) , col= additionalFeatureCol, lwd = additionalFeatureCex, type = "l")
           })
         })
         additionalFeature_legend = TRUE
