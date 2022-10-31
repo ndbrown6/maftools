@@ -104,7 +104,7 @@ oncoplot = oncoplot = function(maf, top = 20, minMut = NULL, genes = NULL, alter
                                genesToIgnore = NULL, removeNonMutated = TRUE, fill = TRUE, cohortSize = NULL,
                                colors = NULL, cBioPortal = FALSE, bgCol = "#CCCCCC", borderCol = 'white', annoBorderCol = NA, numericAnnoCol = NULL,
                                drawBox = FALSE, fontSize = 0.8, SampleNamefontSize = 1, titleFontSize = 1.5, legendFontSize = 1.2, annotationFontSize = 1.2,
-                               sepwd_genes = 0.5, sepwd_samples = 0.25, writeMatrix = FALSE, colbar_pathway = FALSE, showTitle = TRUE, titleText = NULL, showPct = TRUE){
+                               sepwd_genes = 0.5, sepwd_samples = 0.25, writeMatrix = FALSE, colbar_pathway = FALSE, showTitle = TRUE, titleText = NULL, showPct = TRUE, legend = FALSE){
 
 
   #Total samples
@@ -1025,74 +1025,76 @@ oncoplot = oncoplot = function(maf, top = 20, minMut = NULL, genes = NULL, alter
   }
 
   #08: Add legends
-  par(mar = c(0, 0.5, 0, 0), xpd = TRUE)
+  if (legend) {
+	  par(mar = c(0, 0.5, 0, 0), xpd = TRUE)
 
-  plot(NULL,ylab='',xlab='', xlim=0:1, ylim=0:1, axes = FALSE)
-  leg_classes = vc_col[vc_codes[2:length(vc_codes)]]
-  leg_classes_pch = rep(15, length(leg_classes))
-  if(additionalFeature_legend){
+	  plot(NULL,ylab='',xlab='', xlim=0:1, ylim=0:1, axes = FALSE)
+	  leg_classes = vc_col[vc_codes[2:length(vc_codes)]]
+	  leg_classes_pch = rep(15, length(leg_classes))
+	  if(additionalFeature_legend){
 
-    if(!is(object = additionalFeature, class2 = "list")){
-      if(length(additionalFeature) < 2){
-        stop("additionalFeature must be of length two. See ?oncoplot for details.")
-      }else{
-        additionalFeature = list(additionalFeature)
-      }
-    }
+	    if(!is(object = additionalFeature, class2 = "list")){
+	      if(length(additionalFeature) < 2){
+		stop("additionalFeature must be of length two. See ?oncoplot for details.")
+	      }else{
+		additionalFeature = list(additionalFeature)
+	      }
+	    }
 
-    if(length(additionalFeaturePch) != length(additionalFeature)){
-      additionalFeaturePch = rep(additionalFeaturePch, length(additionalFeature))
-    }
+	    if(length(additionalFeaturePch) != length(additionalFeature)){
+	      additionalFeaturePch = rep(additionalFeaturePch, length(additionalFeature))
+	    }
 
-    if(length(additionalFeatureCol) != length(additionalFeature)){
-      additionalFeatureCol = rep(additionalFeatureCol, length(additionalFeature))
-    }
+	    if(length(additionalFeatureCol) != length(additionalFeature)){
+	      additionalFeatureCol = rep(additionalFeatureCol, length(additionalFeature))
+	    }
 
-    for(af_idx in 1:length(additionalFeature)){
-      af = additionalFeature[[af_idx]]
-      leg_classes = c(leg_classes,additionalFeatureCol[af_idx])
-      names(leg_classes)[length(leg_classes)] = paste(af, collapse = ":")
-      leg_classes_pch = c(leg_classes_pch, additionalFeaturePch[af_idx])
-    }
-  }
+	    for(af_idx in 1:length(additionalFeature)){
+	      af = additionalFeature[[af_idx]]
+	      leg_classes = c(leg_classes,additionalFeatureCol[af_idx])
+	      names(leg_classes)[length(leg_classes)] = paste(af, collapse = ":")
+	      leg_classes_pch = c(leg_classes_pch, additionalFeaturePch[af_idx])
+	    }
+	  }
 
-  lep = legend("topleft", legend = names(leg_classes),
-               col = leg_classes, border = NA, bty = "n",
-               ncol= 2, pch = leg_classes_pch, xpd = TRUE, xjust = 0, yjust = 0, cex = legendFontSize)
+	  lep = legend("topleft", legend = names(leg_classes),
+		       col = leg_classes, border = NA, bty = "n",
+		       ncol= 2, pch = leg_classes_pch, xpd = TRUE, xjust = 0, yjust = 0, cex = legendFontSize)
 
-  x_axp = 0+lep$rect$w
+	  x_axp = 0+lep$rect$w
 
-  if(!is.null(clinicalFeatures)){
+	  if(!is.null(clinicalFeatures)){
 
-    for(i in 1:ncol(annotation)){
-      #x = unique(annotation[,i])
-      x = annotationColor[[i]]
-      xt = names(x)
-      if("NA" %in% xt){
-        xt = xt[!xt %in% "NA"]
-        xt = sort(xt, decreasing = FALSE)
-        xt = c(xt, "NA")
-        x = x[xt]
-      }else{
-        xt = sort(xt, decreasing = FALSE)
-        x = x[xt]
-      }
+	    for(i in 1:ncol(annotation)){
+	      #x = unique(annotation[,i])
+	      x = annotationColor[[i]]
+	      xt = names(x)
+	      if("NA" %in% xt){
+		xt = xt[!xt %in% "NA"]
+		xt = sort(xt, decreasing = FALSE)
+		xt = c(xt, "NA")
+		x = x[xt]
+	      }else{
+		xt = sort(xt, decreasing = FALSE)
+		x = x[xt]
+	      }
 
-      if(length(x) <= 4){
-        n_col = 1
-      }else{
-        n_col = (length(x) %/% 4)+1
-      }
-      names(x)[is.na(names(x))] = "NA"
+	      if(length(x) <= 4){
+		n_col = 1
+	      }else{
+		n_col = (length(x) %/% 4)+1
+	      }
+	      names(x)[is.na(names(x))] = "NA"
 
-      lep = legend(x = x_axp, y = 1, legend = names(x),
-                   col = x, border = NA,
-                   ncol= n_col, pch = 15, xpd = TRUE, xjust = 0, bty = "n",
-                   cex = annotationFontSize, title = rev(names(annotation))[i],
-                   title.adj = 0)
-      x_axp = x_axp + lep$rect$w
+	      lep = legend(x = x_axp, y = 1, legend = names(x),
+			   col = x, border = NA,
+			   ncol= n_col, pch = 15, xpd = TRUE, xjust = 0, bty = "n",
+			   cex = annotationFontSize, title = rev(names(annotation))[i],
+			   title.adj = 0)
+	      x_axp = x_axp + lep$rect$w
 
-    }
+	    }
+	  }
   }
 
   if(removeNonMutated){
