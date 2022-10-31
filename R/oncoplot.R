@@ -206,7 +206,7 @@ oncoplot = oncoplot = function(maf, top = 20, minMut = NULL, genes = NULL, alter
     mat_origin = mat_origin[!rownames(mat_origin) %in% genesToIgnore,]
   }
 
-  tsbs = levels(getSampleSummary(x = maf)[,Tumor_Sample_Barcode])
+  tsbs = sampleOrder
 
   if(!removeNonMutated){
     tsb.include = matrix(data = 0, nrow = nrow(numMat),
