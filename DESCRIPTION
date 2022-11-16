@@ -27,7 +27,13 @@ Imports:
     RColorBrewer,
     Rhtslib,
     survival,
-    DNAcopy
+    DNAcopy,
+    grid,
+    gridExtra,
+    ggplot2,
+    dplyr,
+    magrittr,
+    cowplot
 Suggests: 
     berryFunctions,
     Biostrings,
